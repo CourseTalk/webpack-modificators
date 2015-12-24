@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.2 (2015-12-24)
+
+* Fix publish script
+
 ## 1.0.1 (2015-12-24)
 
 * Fix publish tests
