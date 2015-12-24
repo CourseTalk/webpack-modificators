@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1 (2015-12-24)
+
+* Fix publish tests
+
 ## 1.0.0 (2015-12-24)
 
 * First release
