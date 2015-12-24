@@ -31,7 +31,23 @@ WebpackModificators.prototype.apply = function (compiler) {
     });
 };
 
+function fileWithModificator_node10 (modificator, fieName) {
+    var fileData = fieName.split('.');
+    var index = fileData.length - 2;
+    if (index < 0) {
+        index = 0;
+    }
+    if (!fileData[index]) {
+        index = fileData.length - 1;
+    }
+    fileData[index] = fileData[index] + '--' + modificator;
+    return fileData.join('.');
+}
+
 function fileWithModificator (modificator, fieName) {
+    if (!path.hasOwnProperty('parse')) {
+        return fileWithModificator_node10(modificator, fieName);
+    }
     var fileInfo = path.parse(fieName);
     fileInfo.name = fileInfo.name + '--' + modificator;
     fileInfo.base = fileInfo.name + fileInfo.ext;
