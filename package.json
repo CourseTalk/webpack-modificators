@@ -4,8 +4,9 @@
   "description": "his WebPack plugin allows to replace modules by modificator name",
   "main": "index.js",
   "scripts": {
-    "pretest": "jshint *.js spec",
-    "test": "jasmine-node --captureExceptions spec"
+    "pretest": "jshint *.js spec example",
+    "test": "jasmine-node --captureExceptions spec",
+    "build_example": "cd example && webpack"
   },
   "repository": {
     "type": "git",

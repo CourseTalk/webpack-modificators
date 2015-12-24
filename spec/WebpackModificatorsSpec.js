@@ -52,6 +52,7 @@ describe('WebpackModificators', function () {
             expect(fs.existsSync(outputFile)).toBeTruthy();
             var fileContent = fs.readFileSync(outputFile).toString();
             expect(fileContent).toContain('____dependency.js___');
+            expect(fileContent).toContain('____lib.js___');
             done();
         });
     });
@@ -74,6 +75,30 @@ describe('WebpackModificators', function () {
             expect(fs.existsSync(outputFile)).toBeTruthy();
             var fileContent = fs.readFileSync(outputFile).toString();
             expect(fileContent).toContain('____dependency--v2.js___');
+            expect(fileContent).toContain('____lib.js___');
+            done();
+        });
+    });
+
+    it('Replate entry file with modificator v3', function (done) {
+        buildWebpack({
+            entry: {
+                entry: path.join(FIXTURES, 'entry.js')
+            },
+            output: {
+                path: OUTPUT_DIR,
+                filename: '[name]-bundle.js'
+            },
+            plugins: [new WebpackModificators('v3')]
+        }, function (err, stats) {
+            expect(err).toBeFalsy();
+            expect(stats.compilation.errors).toEqual([]);
+            expect(stats.compilation.warnings).toEqual([]);
+            var outputFile = path.join(OUTPUT_DIR, 'entry-bundle.js');
+            expect(fs.existsSync(outputFile)).toBeTruthy();
+            var fileContent = fs.readFileSync(outputFile).toString();
+            expect(fileContent).toContain('____dependency.js___');
+            expect(fileContent).toContain('____lib--v3.js___');
             done();
         });
     });
