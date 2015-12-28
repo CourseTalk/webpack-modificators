@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.3 (2015-12-28)
+
+* Fix nmp description
+* Fix publish script
+
 ## 1.0.2 (2015-12-24)
 
 * Fix publish script

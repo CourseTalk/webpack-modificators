@@ -1,7 +1,7 @@
 {
   "name": "webpack-modificators",
-  "version": "1.0.2",
-  "description": "his WebPack plugin allows to replace modules by modificator name",
+  "version": "1.0.3",
+  "description": "This WebPack plugin allows to replace modules by modificator name",
   "main": "index.js",
   "scripts": {
     "pretest": "jshint *.js spec example",
