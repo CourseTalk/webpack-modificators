@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.7 (2016-02-26)
+
+* Fix dependencies
+
 ## 1.0.6 (2016-02-26)
 
 * Fix tests
