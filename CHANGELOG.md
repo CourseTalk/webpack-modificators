@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.6 (2016-02-26)
+
+* Fix tests
+
+## 1.0.5 (2016-02-26)
+
+* Add multi modificator
+
 ## 1.0.3 (2015-12-28)
 
 * Fix nmp description
