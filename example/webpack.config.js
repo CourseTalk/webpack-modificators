@@ -22,7 +22,7 @@ var config = [{
         path: DIST,
         filename: '[name]-bundle.js'
     },
-    plugins: [new WebpackModificators('new')]
+    plugins: [new WebpackModificators({strong: ['new']})]
 }];
 
 module.exports = config;

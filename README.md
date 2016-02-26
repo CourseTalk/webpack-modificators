@@ -41,7 +41,7 @@ module.exports = [{
 }, {
   entry: { entry2: 'file.js' },
   output: { },
-  plugins: [new WebpackModificators('new')]
+  plugins: [new WebpackModificators({strong: ['new']})]
 }];
 ```
 

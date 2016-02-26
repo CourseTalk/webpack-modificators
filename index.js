@@ -1,14 +1,18 @@
 'use strict';
 
 var path = require("path"),
-    fs = require('fs');
+    fs = require('fs'),
+    R = require('ramda'),
+    Maybe = require('ramda-fantasy').Maybe;
 
+var SEPORATOR = '--';
 /**
  * WebpackModificators Plugin constructor
  * @param {object} data - Widget settings
  * @constructor
  */
 function WebpackModificators(data) {
+    data = data || {};
     this.week_modificators = data.week || [];
     this.strong_modificators = data.strong || [];
     this.used_modificators = [];
@@ -19,24 +23,20 @@ function WebpackModificators(data) {
  * @param compiler
  */
 WebpackModificators.prototype.apply = function (compiler) {
-    var modificator = this.modificator;
+    var _this = this;
     compiler.plugin('normal-module-factory', function (nmf) {
         nmf.plugin("before-resolve", function (result, callback) {
             if (!result) {
                 return callback();
             }
-            if (checkFileWithModificator(modificator, result.context, result.request)) {
-                result.request = fileWithModificator(modificator, result.request);
-            }
+            result.request = _this.lookupModificators(result.context, result.request);
             return callback(null, result);
         });
         nmf.plugin("after-resolve", function (result, callback) {
             if (!result){
                 return callback();
             }
-            if (checkFileWithModificator(modificator, result.context, result.resource)) {
-                result.resource = fileWithModificator(modificator, result.resource);
-            }
+            result.resource = _this.lookupModificators(result.context, result.resource);
             return callback(null, result);
         });
     });
@@ -48,23 +48,47 @@ WebpackModificators.prototype.apply = function (compiler) {
  * @param {string} file - file name
  * @returns {string}
  */
-WebpackModificators.prototype.lookup_modificators = function lookup_modificators(source, file) {
-    for (var strong_key in this.strong_modificators) {
-        if (this.strong_modificators.hasOwnProperty(strong_key)) {
-            var strong_modificator = this.strong_modificators[strong_key];
-            if (checkFileWithModificator(strong_modificator, source, file)) {
-                this.used_modificators.push(strong_modificator);
-                return fileWithModificator(strong_modificator, file);
-            }
+WebpackModificators.prototype.lookupModificators = function (source, file) {
+    var checModificator = function (modificator) {
+        var result = null;
+        if (checkFileWithModificator(modificator, source, file)) {
+            this.used_modificators.push(modificator);
+            result = fileWithModificator(modificator, file);
+        }
+        return Maybe(result)
+    }.bind(this);
+    var modificators = R.concat(this.strong_modificators, this.week_modificators);
+    for (var n = modificators.length; n >= 1; n--) {
+        var combModificators = R.map(R.join(SEPORATOR), combsWithRep(n, modificators));
+        var checks = R.filter(Maybe.isJust, R.map(checModificator, combModificators));
+        var files = R.map(function (m) {return m.getOrElse(file)}, checks);
+        if (files.length > 1) {
+            throw Error("File conflict: " + files);
+        }
+        if (files.length == 1) {
+            return files[0];
         }
     }
-
-    for (var weak_key in this.week_modificators) {
-        if (this.week_modificators.hasOwnProperty(weak_key)) {
-            var week_modificator = this.week_modificators[weak_key];
-        }
-    }
+    return file
 };
+
+/**
+ * Get combinations with replacment
+ * @param {int} n - size of each chunk
+ * @param {Array} list - list of elements
+ * @returns {Array}
+ */
+var combsWithRep = R.curry(function (n, list) {
+    if (n == 0) {
+        return [[]];
+    } else if (list.length == 0) {
+        return [];
+    } else {
+        var tails = combsWithRep(n - 1, list);
+        var concatAll = R.map(R.concat(R.__, R.__), R.map(R.of, list));
+        return R.ap(concatAll, tails);
+    }
+});
 
 /**
  * Get file name with modificator (version for node 0.10)
@@ -81,7 +105,7 @@ function fileWithModificator_node10 (modificator, fieName) {
     if (!fileData[index]) {
         index = fileData.length - 1;
     }
-    fileData[index] = fileData[index] + '--' + modificator;
+    fileData[index] = fileData[index] + SEPORATOR + modificator;
     return fileData.join('.');
 }
 
@@ -96,7 +120,7 @@ function fileWithModificator (modificator, fieName) {
         return fileWithModificator_node10(modificator, fieName);
     }
     var fileInfo = path.parse(fieName);
-    fileInfo.name = fileInfo.name + '--' + modificator;
+    fileInfo.name = fileInfo.name + SEPORATOR + modificator;
     fileInfo.base = fileInfo.name + fileInfo.ext;
     return path.format(fileInfo);
 }
