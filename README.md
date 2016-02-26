@@ -22,7 +22,7 @@ var WebpackModificators = require('webpack-modificators');
 module.exports = {
   entry: { },
   output: { },
-  plugins: [new WebpackModificators('new')]
+  plugins: [new WebpackModificators({strong: ['new']})]
 };
 ```
 
