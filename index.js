@@ -40,10 +40,10 @@ WebpackModificators.prototype.apply = function (compiler) {
             return callback(null, result);
         });
     });
-    compiler.plugin('done', function (stat) {
+    compiler.plugin('done', function () {
         var not_used = R.difference(_this.strong_modificators, _this.used_modificators);
         if (not_used.length) {
-            throw Error("Some strong modificators are not used: " + not_used)
+            throw Error("Some strong modificators are not used: " + not_used);
         }
     });
 };
@@ -62,21 +62,21 @@ WebpackModificators.prototype.lookupModificators = function (source, file) {
             this.used_modificators = R.concat(this.used_modificators, modificators);
             result = fileWithModificator(modificator, file);
         }
-        return Maybe(result)
+        return Maybe(result);
     }.bind(this);
     var modificators = R.concat(this.strong_modificators, this.week_modificators);
     for (var n = modificators.length; n >= 1; n--) {
         var combModificators = R.map(R.join(SEPORATOR), combsWithRep(n, modificators));
         var checks = R.filter(Maybe.isJust, R.map(checModificator, combModificators));
-        var files = R.map(function (m) {return m.getOrElse(file)}, checks);
+        var files = R.map(function (m) {return m.getOrElse(file);}, checks);
         if (files.length > 1) {
             throw Error("File conflict: " + files);
         }
-        if (files.length == 1) {
+        if (files.length === 1) {
             return files[0];
         }
     }
-    return file
+    return file;
 };
 
 /**
@@ -86,9 +86,9 @@ WebpackModificators.prototype.lookupModificators = function (source, file) {
  * @returns {Array}
  */
 var combsWithRep = R.curry(function (n, list) {
-    if (n == 0) {
+    if (n === 0) {
         return [[]];
-    } else if (list.length == 0) {
+    } else if (list.length === 0) {
         return [];
     } else {
         var tails = combsWithRep(n - 1, list);
