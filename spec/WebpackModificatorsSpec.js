@@ -112,7 +112,7 @@ describe('WebpackModificators', function () {
                 path: OUTPUT_DIR,
                 filename: '[name]-bundle.js'
             },
-            plugins: [new WebpackModificators({strong: ['mod1', 'mod2']})]
+            plugins: [new WebpackModificators({strong: ['mod1', 'mod2', 'v2']})]
         }, function (err, stats) {
             expect(err).toBeFalsy();
             expect(stats.compilation.errors).toEqual([]);
@@ -120,7 +120,7 @@ describe('WebpackModificators', function () {
             var outputFile = path.join(OUTPUT_DIR, 'entry-bundle.js');
             expect(fs.existsSync(outputFile)).toBeTruthy();
             var fileContent = fs.readFileSync(outputFile).toString();
-            expect(fileContent).toContain('____dependency.js___');
+            expect(fileContent).toContain('____dependency--v2.js___');
             expect(fileContent).toContain('____multi_component--mod1--mod2.js___');
             done();
         });

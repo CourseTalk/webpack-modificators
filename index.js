@@ -40,6 +40,12 @@ WebpackModificators.prototype.apply = function (compiler) {
             return callback(null, result);
         });
     });
+    compiler.plugin('done', function (stat) {
+        var not_used = R.difference(_this.strong_modificators, _this.used_modificators);
+        if (not_used.length) {
+            throw Error("Some strong modificators are not used: " + not_used)
+        }
+    });
 };
 
 /**
@@ -52,7 +58,8 @@ WebpackModificators.prototype.lookupModificators = function (source, file) {
     var checModificator = function (modificator) {
         var result = null;
         if (checkFileWithModificator(modificator, source, file)) {
-            this.used_modificators.push(modificator);
+            var modificators = modificator.split(SEPORATOR);
+            this.used_modificators = R.concat(this.used_modificators, modificators);
             result = fileWithModificator(modificator, file);
         }
         return Maybe(result)
