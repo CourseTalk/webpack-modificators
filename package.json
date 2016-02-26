@@ -1,6 +1,6 @@
 {
   "name": "webpack-modificators",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "This WebPack plugin allows to replace modules by modificator name",
   "main": "index.js",
   "scripts": {
